@@ -606,16 +606,19 @@ static int16_t process_bafang_display_read_speed()
 
 		switch (g_config.walk_mode_data_display)
 		{
-		case WALK_MODE_DATA_TEMPERATURE:
-			// Keep temperature in C, farenheit would be out of range
-			data = app_get_temperature();
-			break;
-		case WALK_MODE_DATA_REQUESTED_POWER:
-			data = motor_get_target_current();
-			break;
-		case WALK_MODE_DATA_BATTERY_PERCENT:
-			data = battery_get_percent();
-			break;
+			case WALK_MODE_DATA_TEMPERATURE:
+				// Keep temperature in C, farenheit would be out of range
+				data = app_get_temperature();
+				break;
+			case WALK_MODE_DATA_REQUESTED_POWER:
+	 			data = motor_get_target_current();
+				break;
+			case WALK_MODE_DATA_BATTERY_PERCENT:
+				data = battery_get_percent();
+				break;
+			case WALK_MODE_DATA_FW_MODE:
+				data = (app_get_operation_mode() == 0) ? 10 : 20;
+				break;
 		}
 
 		if (g_config.use_freedom_units)
@@ -625,7 +628,8 @@ static int16_t process_bafang_display_read_speed()
 		}
 
 		// T_kph -> rpm
-		speed = (uint16_t)(25000.f / (3 * 3.14159f * 1.27f * EXPAND_U16(g_config.wheel_size_inch_x10_u16h, g_config.wheel_size_inch_x10_u16l)) * data);
+		float conversionRatio = (25000.f / (3 * 3.14159f * 1.27f * EXPAND_U16(g_config.wheel_size_inch_x10_u16h, g_config.wheel_size_inch_x10_u16l)));
+		speed = (uint16_t)(conversionRatio * data);
 	}
 	else
 	{

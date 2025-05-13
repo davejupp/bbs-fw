@@ -142,6 +142,10 @@ void app_process()
 	{
 		target_current = 10;
 	}
+	else if (assist_level == ASSIST_PUSH && g_config.walk_mode_data_display == WALK_MODE_DATA_FW_MODE)
+	{
+		target_current = 0;
+	}
 	else
 	{
 		apply_pretension(&target_current);
@@ -257,6 +261,10 @@ void app_set_lights(bool on)
 	}
 }
 
+uint8_t app_get_operation_mode() {
+	return operation_mode;
+}
+
 void app_set_operation_mode(uint8_t mode)
 {
 	if (operation_mode != mode)
@@ -333,10 +341,10 @@ uint8_t app_get_status_code()
 
 	// Disable LVC error since it is not shown on display in original firmware
 	// Uncomment if you want to enable
-	// if (motor & MOTOR_ERROR_LVC)
-	// {
-	//     return STATUS_ERROR_LVC;
-	// }
+	if (motor & MOTOR_ERROR_LVC)
+	{
+	    return STATUS_ERROR_LVC;
+	}
 
 	if (brake_is_activated())
 	{
