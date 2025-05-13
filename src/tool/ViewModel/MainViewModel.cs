@@ -11,6 +11,43 @@ namespace BBSFW.ViewModel
 
 	public class MainViewModel : ObservableObject
 	{
+		private const string APP_TITLE = "BBS-FW Tool";
+		private string _configFileName;
+
+		public string ConfigFileName
+		{
+			get { return _configFileName; }
+			set
+			{
+				if (_configFileName != value)
+				{
+					_configFileName = value;
+					ApplicationTitle = ConfigFilenameExists ? APP_TITLE + " - " + System.IO.Path.GetFileName(value) : APP_TITLE; 
+					OnPropertyChanged(nameof(ConfigFileName));
+					OnPropertyChanged(nameof(ConfigFilenameExists));
+				}
+			}
+		}
+
+		public bool ConfigFilenameExists
+		{
+			get
+			{
+				return !String.IsNullOrEmpty(ConfigFileName);
+			}
+		}
+
+		private string _applicationTitle = "BBS - FW Tool";
+		public string ApplicationTitle {
+			get { return _applicationTitle; }
+			set {
+				if (_applicationTitle != value)
+				{
+					_applicationTitle = value;
+					OnPropertyChanged(nameof(ApplicationTitle));
+				}
+			}
+		}
 
 		public ConfigurationViewModel ConfigVm { get; private set; }
 
@@ -29,6 +66,19 @@ namespace BBSFW.ViewModel
 		public ICommand OpenConfigCommand
 		{
 			get { return new DelegateCommand(OnOpenConfig); }
+		}
+
+		/**
+		 * This doesnt actually close the config, it just clears the saved file name so you can't accidentally overwrite
+		 */
+		public ICommand CloseConfigCommand
+		{
+			get { return new DelegateCommand(OnCloseConfig); }
+		}
+
+		public ICommand SaveAsConfigCommand
+		{
+			get { return new DelegateCommand(OnSaveAsConfig); }
 		}
 
 		public ICommand SaveConfigCommand
@@ -105,6 +155,11 @@ namespace BBSFW.ViewModel
 			}
 		}
 
+		private void OnCloseConfig()
+		{
+			ConfigFileName = null;
+		}
+
 		private void OnOpenConfig()
 		{
 			var dialog = new OpenFileDialog();
@@ -117,6 +172,7 @@ namespace BBSFW.ViewModel
 				try
 				{
 					ConfigVm.ReadConfiguration(dialog.FileName);
+					ConfigFileName = dialog.FileName;
 				}
 				catch (Exception e)
 				{
@@ -132,11 +188,44 @@ namespace BBSFW.ViewModel
 				return;
 			}
 
+			// This should be impossible anyhow as the menu item should be disabled.
+			if (!ConfigFilenameExists)
+			{
+				OnSaveAsConfig();
+				return;
+			}
+
+			try
+			{
+				ConfigVm.WriteConfiguration(ConfigFileName);
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
+		}		
+
+		private void OnSaveAsConfig()
+		{
+			if (!ValidateConfig())
+			{
+				return;
+			}
+
 			var dialog = new SaveFileDialog();
 
 			dialog.Filter = "XML File|*.xml";
 			dialog.Title = "Save Configuration";
-			dialog.FileName = "bbsfw.xml";
+			if (String.IsNullOrEmpty(ConfigFileName))
+			{
+				dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+				dialog.FileName = "bbsfw.xml";
+			}
+			else
+			{
+				dialog.InitialDirectory = System.IO.Path.GetDirectoryName(ConfigFileName);
+				dialog.FileName =  System.IO.Path.GetFileName(ConfigFileName);
+			}
 
 			var result = dialog.ShowDialog();
 			if (result.HasValue && result.Value)
@@ -144,6 +233,8 @@ namespace BBSFW.ViewModel
 				try
 				{
 					ConfigVm.WriteConfiguration(dialog.FileName);
+					// Updating the config file name will also update the application title.
+					ConfigFileName = dialog.FileName;
 				}
 				catch (Exception e)
 				{
