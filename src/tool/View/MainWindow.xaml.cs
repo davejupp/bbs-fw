@@ -24,10 +24,5 @@ namespace BBSFW
 		{
 			InitializeComponent();
 		}
-
-		private void MenuItem_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
-		{
-
-		}
 	}
 }
