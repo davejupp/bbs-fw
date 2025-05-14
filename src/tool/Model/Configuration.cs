@@ -796,9 +796,14 @@ namespace BBSFW.Model
 		{
 			var serializer = new XmlSerializer(typeof(Configuration));
 			var settings = new XmlWriterSettings { Encoding = Encoding.UTF8, Indent = true };
-			using (var xmlWriter = XmlWriter.Create(new StreamWriter(filepath), settings))
+			// This line used to create a new xmlWriter directly, which seems like it should work,
+			// but it doesn't. (saving the same file repeatedly very fast causes exceptions)
+			// So we create a streamWriter and pass it to the xmlWriter so we can close it explicitly
+			using (var streamWriter = new StreamWriter(filepath))
 			{
+				var xmlWriter = XmlWriter.Create(streamWriter, settings);
 				serializer.Serialize(xmlWriter, this);
+				xmlWriter.Close();
 			}
 		}
 
