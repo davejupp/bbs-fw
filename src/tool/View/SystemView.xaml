@@ -374,6 +374,8 @@
 						<Run FontWeight="Bold">Requested Power</Run> - Display requested motor power in percent.
 						<LineBreak />
 						<Run FontWeight="Bold">Battery Level</Run> - Display computed battery level in percent.
+						<LineBreak />
+						<Run FontWeight="Bold">Battery Level</Run> - Display current FW mode, 0 for standard, 1 for sport.
 						</TextBlock>
 					</TextBlock.ToolTip>
 				</TextBlock>

@@ -100,7 +100,8 @@ namespace BBSFW.Model
 			Speed = 0,
 			Temperature = 1,
 			RequestedPower = 2,
-			BatteryPercent = 3
+			BatteryPercent = 3,
+			Mode = 4
 		}
 
 		public enum LightsModeOptions
