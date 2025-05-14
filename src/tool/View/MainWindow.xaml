@@ -65,6 +65,13 @@
 				<vw:EventLogView Margin="10" />
 			</TabItem>
 		</TabControl>
-		
 	</Grid>
+
+	<Window.InputBindings>
+		<KeyBinding Key="o" Modifiers="Ctrl" Command="{Binding OpenConfigCommand}" />
+		<KeyBinding Key="s" Modifiers="Ctrl" Command="{Binding SaveConfigCommand}" />
+		<KeyBinding Key="a" Modifiers="Ctrl" Command="{Binding SaveAsConfigCommand}" />
+		<KeyBinding Key="w" Modifiers="Ctrl" Command="{Binding CloseConfigCommand}" />
+	</Window.InputBindings>
+
 </Window>
