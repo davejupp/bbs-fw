@@ -18,7 +18,6 @@
 #include "util.h"
 #include "system.h"
 
-
 typedef struct
 {
 	assist_level_t level;
@@ -56,6 +55,8 @@ static uint16_t ramp_up_current_interval_ms;
 static uint32_t power_blocked_until_ms;
 
 static uint16_t pretension_cutoff_speed_rpm_x10;
+static uint16_t brake_light_flash_next_toggle;
+static const uint16_t BRAKE_LIGHT_FLASH_INTERVAL_MS = 500; // Define the interval in milliseconds for brake light flashing
 
 static bool lights_state = false;
 
@@ -241,14 +242,17 @@ void app_set_lights(bool on)
 		(assist_level == ASSIST_9 && g_config.assist_mode_select == ASSIST_MODE_SELECT_PAS9_LIGHT)
 		)
 	{
-		if (on)
+		// update so if lights are disabled the light display reflects the mode
+		if (g_config.assist_mode_select == ASSIST_MODE_SELECT_LIGHTS &&
+			(g_config.lights_mode == LIGHTS_MODE_DISABLED ||
+			g_config.lights_mode == LIGHTS_MODE_BRAKE_LIGHT))
 		{
-			app_set_operation_mode(OPERATION_MODE_SPORT);
+			lights_state = on;
+			eventlog_write_data(EVT_DATA_LIGHTS, on);
+			lights_set(on);
 		}
-		else
-		{
-			app_set_operation_mode(OPERATION_MODE_DEFAULT);
-		}
+
+		on ? app_set_operation_mode(OPERATION_MODE_SPORT) :	app_set_operation_mode(OPERATION_MODE_DEFAULT);
 	}
 	else
 	{
@@ -829,9 +833,33 @@ bool apply_brake(uint8_t* target_current)
 {
 	bool is_braking = brake_is_activated();
 
+	brake_light_flash_next_toggle = system_ms() + BRAKE_LIGHT_FLASH_INTERVAL_MS;
+
 	if (g_config.lights_mode == LIGHTS_MODE_BRAKE_LIGHT)
 	{
-		lights_set(is_braking);
+		uint32_t now = system_ms();
+		if (now >= brake_light_flash_next_toggle && is_braking) {
+			brake_light_flash_next_toggle = system_ms() + BRAKE_LIGHT_FLASH_INTERVAL_MS;
+			lights_state = !lights_state;
+			lights_set(lights_state);
+		}
+		else if (!is_braking)
+		{
+			lights_state = false;
+			lights_set(is_braking);
+		}
+
+		/*
+				uint32_t now = system_ms();
+
+		adc_process();
+		motor_process();
+
+		if (now >= next_app_proccess)
+		{
+			next_app_proccess = now + APP_PROCESS_INTERVAL_MS;
+
+		*/
 	}
 
 	if (is_braking)

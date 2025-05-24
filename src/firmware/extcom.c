@@ -877,7 +877,6 @@ static int16_t process_bafang_display_write_speed_limit()
 		return KEEP;
 	}
 
-	/*
 	if (compute_checksum(msgbuf, 4) == msgbuf[4])
 	{
 		 // Ignoring speed limit requested by display,
@@ -891,7 +890,5 @@ static int16_t process_bafang_display_write_speed_limit()
 		eventlog_write(EVT_ERROR_EXTCOM_CHEKSUM);
 		return DISCARD;
 	}
-	*/
-
 	return 5;
 }

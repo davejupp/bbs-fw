@@ -94,8 +94,9 @@ static float thermistor_ntc_calculate_temperature(float R, float invBeta)
 #ifdef BBSHD
 static int16_t thermistor_ptc_bbshd_calculate_temperature(int32_t R_x100)
 {
-	// interpolate in lookup table
-
+	// R_x100 is resistance in Ohm * 100, e.g. 92100 for 921 Ohm
+	// 
+	// interpolate in lookup table, handle hopefully impossible(?) edge cases with weird temperatures.
 	if (R_x100 < bbshd_ptc_lut[0].x)
 	{
 		// use minimum value
@@ -104,7 +105,7 @@ static int16_t thermistor_ptc_bbshd_calculate_temperature(int32_t R_x100)
 	else if (R_x100 > bbshd_ptc_lut[BBSHD_PTC_LUT_SIZE - 1].x)
 	{
 		// use maximum value
-		return bbshd_ptc_lut[BBSHD_PTC_LUT_SIZE - 1].y;
+		return bbshd_ptc_lut[BBSHD_PTC_LUT_SIZE - 1].x;
 	}
 
 	uint8_t i = 0;

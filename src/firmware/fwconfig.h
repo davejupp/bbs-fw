@@ -50,7 +50,7 @@
 #endif
 
  // Applied to both motor and controller tmeperature sensor
-#define MAX_TEMPERATURE							85
+#define MAX_TEMPERATURE							95
 
 // Current ramp down starts at MAX_TEMPERATURE - 5.
 #define MAX_TEMPERATURE_RAMP_DOWN_INTERVAL		5
@@ -104,7 +104,7 @@
 #define THROTTLE_RESPONSE_QUADRATIC				2
 #define THROTTLE_RESPONSE_CUSTOM				3
 
-#define THROTTLE_RESPONSE_CURVE					THROTTLE_RESPONSE_CUSTOM
+#define THROTTLE_RESPONSE_CURVE					THROTTLE_RESPONSE_QUADRATIC
 
 // Custom throttle map
 // y = pow(x / 100.0, 1.5) * 100.0
@@ -140,7 +140,7 @@
 // cadence_rpm to be used in the formula above. If the
 // actual cadence is lower it will be overriden by this
 // configured value.
-#define TORQUE_POWER_LOWER_RPM_X10				300
+#define TORQUE_POWER_LOWER_RPM_X10				450
 
 // Number of PAS sensor pulses to engage cruise mode,
 // there are 24 pulses per revolution.
