@@ -50,10 +50,10 @@
 #endif
 
  // Applied to both motor and controller tmeperature sensor
-#define MAX_TEMPERATURE							85
+#define MAX_TEMPERATURE							72
 
 // Current ramp down starts at MAX_TEMPERATURE - 5.
-#define MAX_TEMPERATURE_RAMP_DOWN_INTERVAL		5
+#define MAX_TEMPERATURE_RAMP_DOWN_INTERVAL		25
 
 // Maximum allowed motor current in percent of maximum configured current (A)
 // to still apply when maximum temperature has been reached.

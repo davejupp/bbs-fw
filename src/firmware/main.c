@@ -83,7 +83,7 @@ void main(void)
 			battery_process();
 			sensors_process();
 			extcom_process();
-			app_process();
+			app_process(now);
 		}
 
 		watchdog_yeild();

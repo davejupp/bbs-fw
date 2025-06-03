@@ -56,7 +56,7 @@
 
 void app_init();
 
-void app_process();
+void app_process(uint32_t now);
 
 void app_set_assist_level(uint8_t level);
 void app_set_lights(bool on);
