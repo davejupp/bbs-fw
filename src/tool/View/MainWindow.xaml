@@ -25,7 +25,7 @@
 		<Menu Grid.Row="0">
 			<MenuItem Header="_File" Height="22" VerticalContentAlignment="Center">
 				<MenuItem Header="_Open..." Command="{Binding OpenConfigCommand}" InputGestureText="Ctrl+O" />
-				<MenuItem Header="_Close..." Command="{Binding OpenConfigCommand}"  IsEnabled="{Binding ConfigFilenameExists}" InputGestureText="Ctrl+W" />
+				<MenuItem Header="_Close..." Command="{Binding CloseConfigCommand}"  IsEnabled="{Binding ConfigFilenameExists}" InputGestureText="Ctrl+W" />
 				<MenuItem Header="_Save..." Command="{Binding SaveConfigCommand}" IsEnabled="{Binding ConfigFilenameExists}" InputGestureText="Ctrl+S" />
 				<MenuItem Header="Save As..." Command="{Binding SaveAsConfigCommand}" InputGestureText="Ctrl+Shift+S" />
 				<Separator />
